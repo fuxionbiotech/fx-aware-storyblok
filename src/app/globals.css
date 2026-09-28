@@ -1,5 +1,39 @@
+/* Mismas fuentes que fx-aware-web-app (src/app/fonts.css): Scandia es la
+   fuente por defecto del body ahi (via `body { font-family: 'Scandia' }`,
+   no como theme token de Tailwind), y Outfit se carga por si algun
+   componente copiado la referencia. Va ANTES de `@import 'tailwindcss'`:
+   ese import se expande a CSS con sus propios `@layer`, y todo `@import`
+   tiene que preceder cualquier otra regla (spec de CSS). */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @import 'tailwindcss';
 @config '../../tailwind.config.js';
+
+@font-face {
+	font-family: 'Scandia';
+	src: url('./fonts/scandia-regular-webfont.woff2') format('woff2'),
+		url('./fonts/scandia-regular-webfont.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Scandia';
+	src: url('./fonts/scandia-medium-webfont.woff2') format('woff2'),
+		url('./fonts/scandia-medium-webfont.woff') format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Scandia';
+	src: url('./fonts/scandia-bold-webfont.woff2') format('woff2'),
+		url('./fonts/scandia-bold-webfont.woff') format('woff');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
 
 @theme {
 	/* Subconjunto de los tokens de texto/color de la web (Aware UI) */
@@ -11,6 +45,10 @@
 
 	--color-blue-surface: #005cef;
 	--color-blue-surface-3: #e1edff;
+
+	/* Mismos stops que --green-blue-bg-gradient en fx-aware-web-app: fondo
+	   de las pantallas de PRO1 (intro y niveles). */
+	--pro1-bg-gradient: linear-gradient(180deg, #f0fffb 7.71%, #e1edff 43.86%, #ffffff 62.06%);
 }
 
 @layer base {
@@ -48,6 +86,24 @@
 		--shadow: 0 0% 66%;
 
 		--radius: 0.5rem;
+
+		/* Tokens exactos de fx-aware-web-app (src/app/globals.css) que los
+		   componentes de PRO1 referencian via var(--x) en className. Se copian
+		   con el mismo nombre para poder pegar el JSX tal cual. */
+		--text-primary: #353c45;
+		--text-secondary: #454f5e;
+		--text-muted: #83868d;
+		--text-muted2: #687078;
+		--bg--surface-light: #ffffff;
+		--bg-accent-subte: #f5f8fa;
+		--blue-surface: #005cef;
+		--green-text-color: #3bad02;
+		--border-color-neutral: #dddddd;
+		--border-separator: #e4eaed;
+		--shadow-blue-neutral: rgba(83, 133, 156, 0.08);
+		--shadow-blue-soft-4: rgba(94, 121, 146, 0.08);
+		--shadow-blue-soft-5: rgba(89, 131, 151, 0.08);
+		--shadow-gray-3: rgba(126, 126, 126, 0.11);
 	}
 }
 
@@ -57,7 +113,51 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		font-family: 'Scandia', sans-serif;
 	}
+}
+
+/* Accordion (Radix) — misma animación que fx-aware-web-app. */
+
+@keyframes accordion-down {
+	from {
+		height: 0;
+	}
+	to {
+		height: var(--radix-accordion-content-height);
+	}
+}
+
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+	}
+	to {
+		height: 0;
+	}
+}
+
+.accordion-content {
+	overflow: hidden;
+	will-change: height;
+}
+
+.accordion-content[data-state='open'] {
+	animation: accordion-down 0.25s ease-out;
+}
+
+.accordion-content[data-state='closed'] {
+	animation: accordion-up 0.25s ease-out;
+}
+
+.accordion-body > *:first-child {
+	margin-top: 0 !important;
+}
+
+.accordion-body,
+.accordion-body * {
+	max-width: 100%;
+	overflow-wrap: break-word;
 }
 
 @utility scrollbar-hide {
