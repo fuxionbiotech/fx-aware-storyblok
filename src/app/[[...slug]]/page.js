@@ -7,12 +7,19 @@ import { getStoryblokApi } from '@/lib/storyblok';
 // completa de una sola vez.
 const PRO1_LEVELS_SLUG = 'aware/pro1/levels';
 
-async function Pro1LevelsPage() {
+// Idiomas del space (ver Settings > Internationalization). Cuando el editor
+// de Storyblok previsualiza en un idioma no-default, prefija la URL con el
+// código (ej. /en/aware/pro1/intro) — sin esto, ese prefijo se trataria como
+// parte del slug de la story y la busqueda en el CDN siempre fallaria.
+const LANGUAGE_CODES = ['en'];
+
+async function Pro1LevelsPage({ language }) {
 	const storyblokApi = getStoryblokApi();
 
 	const { data } = await storyblokApi.get('cdn/stories', {
 		version: 'draft',
 		starts_with: `${PRO1_LEVELS_SLUG}/`,
+		...(language ? { language } : {}),
 	});
 
 	const stories = [...(data.stories || [])].sort(
@@ -50,12 +57,17 @@ async function Pro1LevelsPage() {
 }
 
 export default async function Page({ params }) {
-	const { slug } = await params;
+	const { slug: rawSlug } = await params;
+	const segments = rawSlug ?? [];
 
-	let fullSlug = slug ? slug.join('/') : 'home';
+	const [maybeLanguage, ...rest] = segments;
+	const language = LANGUAGE_CODES.includes(maybeLanguage) ? maybeLanguage : undefined;
+	const pathSegments = language ? rest : segments;
+
+	let fullSlug = pathSegments.length ? pathSegments.join('/') : 'home';
 
 	if (fullSlug === PRO1_LEVELS_SLUG) {
-		return <Pro1LevelsPage />;
+		return <Pro1LevelsPage language={language} />;
 	}
 
 	let sbParams = {
@@ -65,6 +77,7 @@ export default async function Page({ params }) {
 			'content_item.author',
 			'content_item.related_content',
 		].join(','),
+		...(language ? { language } : {}),
 	};
 
 	const storyblokApi = getStoryblokApi();
