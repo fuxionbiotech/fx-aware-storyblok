@@ -6,6 +6,8 @@ import Author from '@/components/Author';
 import ContentItem from '@/components/ContentItem';
 import ContentCarousel from '@/components/ContentCarousel';
 import PodcastShow from '@/components/PodcastShow';
+import Pro1Intro from '@/components/Pro1Intro';
+import Pro1Level from '@/components/Pro1Level';
 import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 
 export const getStoryblokApi = storyblokInit({
@@ -20,6 +22,8 @@ export const getStoryblokApi = storyblokInit({
 		content_item: ContentItem,
 		content_carousel: ContentCarousel,
 		podcast_show: PodcastShow,
+		pro1_intro: Pro1Intro,
+		pro1_level: Pro1Level,
 	},
 	apiOptions: {
 		/** Set the correct region for your space. Learn more: https://www.storyblok.com/docs/packages/storyblok-js#example-region-parameter */
